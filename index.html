@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Studio - QR Code Generator</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f7f7fc;
+    color: #19172b;
+}
+
+header {
+    padding: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.brand span {
+    color: #8b35dc;
+}
+
+.hero {
+    text-align: center;
+    padding: 35px 20px;
+}
+
+.hero h1 {
+    font-size: 45px;
+}
+
+.hero p {
+    color: #68677b;
+    line-height: 1.7;
+}
+
+.cards {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.card {
+    padding: 30px;
+    border-radius: 22px;
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+}
+
+.red {
+    background: #fff0f1;
+    border: 1px solid #ffd4d8;
+}
+
+.blue {
+    background: #eef4ff;
+    border: 1px solid #d5e2ff;
+}
+
+.card h2 {
+    font-size: 28px;
+}
+
+.card p {
+    color: #626174;
+    line-height: 1.7;
+}
+
+.icon {
+    font-size: 45px;
+}
+
+button {
+    padding: 14px 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.red button {
+    background: #ed2432;
+    color: white;
+}
+
+.blue button {
+    background: #2864df;
+    color: white;
+}
+
+.card button {
+    margin-top: auto;
+}
+
+.page {
+    display: none;
+    min-height: 100vh;
+    padding: 25px 15px;
+}
+
+.macro-page {
+    background: #fff5f6;
+}
+
+.logo-page {
+    background: #f0f5ff;
+}
+
+.tool {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 20px;
+}
+
+.macro-tool {
+    border: 1px solid #ffd2d6;
+}
+
+.logo-tool {
+    border: 1px solid #d7e4ff;
+}
+
+.tool h1 {
+    font-size: 32px;
+}
+
+.tool p {
+    color: #68677b;
+    line-height: 1.6;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin: 18px 0 8px;
+}
+
+input[type="url"] {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+input[type="file"] {
+    max-width: 100%;
+}
+
+.macro-tool button {
+    background: #ed2432;
+    color: white;
+    margin-top: 15px;
+}
+
+.logo-tool button {
+    background: #2864df;
+    color: white;
+    margin-top: 15px;
+}
+
+.back {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.macro-tool .back {
+    color: #ed2432;
+}
+
+.logo-tool .back {
+    color: #2864df;
+}
+
+#dualResult,
+#logoResult {
+    display: none;
+    margin-top: 25px;
+    text-align: center;
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+#work {
+    position: absolute;
+    left: -9999px;
+}
+
+.status {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+@media(max-width: 700px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+    }
+
+    .tool {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">QR<span>Studio</span> ✦</div>
+    <span>Create. Scan. Share.</span>
+</header>
+
+<!-- HOME PAGE -->
+<section id="home">
+
+    <div class="hero">
+        <h1>Make a QR Code.<br>Make It Yours.</h1>
+        <p>
+            Create a dual QR code or make a branded QR code
+            with your own company logo.
+        </p>
+    </div>
+
+    <div class="cards">
+
+        <div class="card red">
+            <div class="icon">▦</div>
+            <h2>Macro + Minor QR</h2>
+            <p>
+                Create a red outer QR code and a violet QR code
+                in the center. Each code contains its own URL.
+            </p>
+            <button onclick="showPage('macroPage')">
+                Get Started →
+            </button>
+        </div>
+
+        <div class="card blue">
+            <div class="icon">✦</div>
+            <h2>QR with Your Logo</h2>
+            <p>
+                Enter your website URL, upload your company logo
+                and create a branded QR code.
+            </p>
+            <button onclick="showPage('logoPage')">
+                Get Started →
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<!-- MACRO MINOR PAGE -->
+<section id="macroPage" class="page macro-page">
+
+    <div class="tool macro-tool">
+
+        <a href="#" class="back"
+           onclick="showPage('home'); return false;">
+            ← Back to Home
+        </a>
+
+        <h1>Macro + Minor QR</h1>
+        <p>Enter two URLs to generate your combined QR code.</p>
+
+        <label for="macroURL">Macro URL — Red QR</label>
+        <input type="url" id="macroURL"
+               placeholder="https://example.com">
+
+        <label for="minorURL">Minor URL — Violet QR</label>
+        <input type="url" id="minorURL"
+               placeholder="https://example.org">
+
+        <button onclick="generateDualQR()">
+            Generate QR Code
+        </button>
+
+        <button onclick="downloadQR('dualCanvas', 'dual-qr.png')">
+            Download PNG
+        </button>
+
+        <div id="dualStatus" class="status"></div>
+
+        <div id="dualResult">
+            <canvas id="dualCanvas" width="800" height="800"></canvas>
+        </div>
+
+        <p>
+            Note: The center QR covers part of the outer QR.
+            Test both codes with a phone before sharing.
+        </p>
+
+    </div>
+</section>
+
+<!-- LOGO QR PAGE -->
+<section id="logoPage" class="page logo-page">
+
+    <div class="tool logo-tool">
+
+        <a href="#" class="back"
+           onclick="showPage('home'); return false;">
+            ← Back to Home
+        </a>
+
+        <h1>QR with Your Logo</h1>
+        <p>Enter a URL and upload your company logo.</p>
+
+        <label for="logoURL">Website URL</label>
+        <input type="url" id="logoURL"
+               placeholder="https://yourwebsite.com">
+
+        <label for="logoFile">Upload Company Logo</label>
+        <input type="file" id="logoFile"
+               accept="image/png,image/jpeg,image/webp">
+
+        <br>
+
+        <button onclick="generateLogoQR()">
+            Generate Logo QR
+        </button>
+
+        <button onclick="downloadQR('logoCanvas', 'logo-qr.png')">
+            Download PNG
+        </button>
+
+        <div id="logoStatus" class="status"></div>
+
+        <div id="logoResult">
+            <canvas id="logoCanvas" width="800" height="800"></canvas>
+        </div>
+
+        <p>
+            Tip: Use a small logo and test the QR code before printing.
+        </p>
+
+    </div>
+</section>
+
+<div id="work"></div>
+
+<script>
+function showPage(pageId) {
+    document.getElementById("home").style.display =
+        pageId === "home" ? "block" : "none";
+
+    document.querySelectorAll(".page").forEach(page => {
+        page.style.display = page.id === pageId ? "block" : "none";
+    });
+
+    window.scrollTo(0, 0);
+}
+
+function validURL(value) {
+    try {
+        const url = new URL(value);
+        return url.protocol === "https:" || url.protocol === "http:";
+    } catch {
+        return false;
+    }
+}
+
+function createQR(text, color, size) {
+    return new Promise((resolve, reject) => {
+        const holder = document.createElement("div");
+        document.getElementById("work").appendChild(holder);
+
+        new QRCode(holder, {
+            text: text,
+            width: size,
+            height: size,
+            colorDark: color,
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        let attempts = 0;
+
+        function checkQR() {
+            const canvas = holder.querySelector("canvas");
+            const img = holder.querySelector("img");
+
+            if (canvas) {
+                resolve(canvas);
+                return;
+            }
+
+            if (img && img.complete && img.naturalWidth > 0) {
+                resolve(img);
+                return;
+            }
+
+            if (++attempts > 100) {
+                reject(new Error("QR generation timed out"));
+                return;
+            }
+
+            setTimeout(checkQR, 50);
+        }
+
+        setTimeout(checkQR, 50);
+    });
+}
+
+async function generateDualQR() {
+    const macro = document.getElementById("macroURL").value.trim();
+    const minor = document.getElementById("minorURL").value.trim();
+    const status = document.getElementById("dualStatus");
+
+    status.style.color = "red";
+
+    if (!validURL(macro) || !validURL(minor)) {
+        status.textContent =
+            "Please enter valid URLs starting with https:// or http://.";
+        return;
+    }
+
+    if (typeof QRCode === "undefined") {
+        status.textContent = "Check your internet connection and refresh.";
+        return;
+    }
+
+    status.textContent = "Generating QR codes...";
+
+    try {
+        document.getElementById("work").innerHTML = "";
+
+        const outer = await createQR(macro, "#ff0000", 800);
+        const inner = await createQR(minor, "#8a2be2", 260);
+
+        const canvas = document.getElementById("dualCanvas");
+        const ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, 800, 800);
+
+        ctx.drawImage(outer, 0, 0, 800, 800);
+
+        const size = 220;
+        const x = (800 - size) / 2;
+        const y = (800 - size) / 2;
+        const padding = 32;
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(
+            x - padding,
+            y - padding,
+            size + padding * 2,
+            size + padding * 2
+        );
+
+        ctx.drawImage(inner, x, y, size, size);
+
+        document.getElementById("dualResult").style.display = "block";
+        status.style.color = "green";
+        status.textContent = "QR generated! Please test both codes.";
+    } catch (error) {
+        status.textContent = "QR generation failed. Refresh and try again.";
+    } finally {
+        document.getElementById("work").innerHTML = "";
+    }
+}
+
+async function generateLogoQR() {
+    const url = document.getElementById("logoURL").value.trim();
+    const file = document.getElementById("logoFile").files[0];
+    const status = document.getElementById("logoStatus");
+
+    status.style.color = "red";
+
+    if (!validURL(url)) {
+        status.textContent = "Please enter a valid website URL.";
+        return;
+    }
+
+    if (!file) {
+        status.textContent = "Please upload a logo image.";
+        return;
+    }
+
+    if (typeof QRCode === "undefined") {
+        status.textContent = "Check your internet connection and refresh.";
+        return;
+    }
+
+    status.textContent = "Generating logo QR...";
+
+    try {
+        document.getElementById("work").innerHTML = "";
+
+        const qr = await createQR(url, "#111111", 800);
+
+        const logo = await new Promise((resolve, reject) => {
+            const image = new Image();
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                image.onload = () => resolve(image);
+                image.onerror = reject;
+                image.src = reader.result;
+            };
+
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+
+        const canvas = document.getElementById("logoCanvas");
+        const ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, 800, 800);
+        ctx.drawImage(qr, 0, 0, 800, 800);
+
+        const box = 150;
+        const x = (800 - box) / 2;
+        const y = (800 - box) / 2;
+
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.roundRect(x - 18, y - 18, box + 36, box + 36, 18);
+        ctx.fill();
+
+        const maxSize = box - 24;
+        const ratio = Math.min(
+            maxSize / logo.width,
+            maxSize / logo.height
+        );
+
+        const width = logo.width * ratio;
+        const height = logo.height * ratio;
+
+        ctx.drawImage(
+            logo,
+            x + (box - width) / 2,
+            y + (box - height) / 2,
+            width,
+            height
+        );
+
+        document.getElementById("logoResult").style.display = "block";
+        status.style.color = "green";
+        status.textContent = "Logo QR generated! Test it before sharing.";
+    } catch (error) {
+        status.textContent = "Could not generate QR. Try another logo.";
+    } finally {
+        document.getElementById("work").innerHTML = "";
+    }
+}
+
+function downloadQR(canvasId, filename) {
+    const canvas = document.getElementById(canvasId);
+    const result = document.getElementById(
+        canvasId === "dualCanvas" ? "dualResult" : "logoResult"
+    );
+
+    if (result.style.display !== "block") {
+        alert("First generate the QR code!");
+        return;
+    }
+
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+}
+</script>
+
+</body>
+</html>
